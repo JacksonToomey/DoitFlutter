@@ -1,8 +1,8 @@
 class UpcomingChore {
-  String id;
-  String name;
-  String details;
-  DateTime dueDate;
+  final String id;
+  final String name;
+  final String details;
+  final DateTime dueDate;
 
   UpcomingChore(this.id, this.name, this.details, this.dueDate);
 

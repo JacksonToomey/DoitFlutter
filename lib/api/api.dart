@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:doit_app/model/upcoming_chore.dart';
+import 'package:doit_app/model/chore_definition.dart';
 
 
 class Api {
@@ -60,9 +61,9 @@ class Api {
     return upcoming;
   }
 
-  Future<void> completeChore(String id) async {
-    var resp = await http.post(
-      "https://api.doit.jtoid.com/api/upcoming/${id}",
+  Future<List<ChoreDefinition>> getChoreDefinitions() async {
+    var resp = await http.get(
+      "https://api.doit.jtoid.com/api/chores",
       headers: {
         "Authorization": "Bearer ${this._token}",
       },
@@ -70,12 +71,52 @@ class Api {
     if(resp.statusCode == 401 || resp.statusCode == 403) {
       await this._resetToken();
       resp = await http.get(
-        "https://api.doit.jtoid.com/api/upcoming",
+        "https://api.doit.jtoid.com/api/chores",
         headers: {
           "Authorization": "Bearer ${this._token}",
         },
       );
     }
+    List<dynamic> data = json.decode(resp.body);
+
+    List<ChoreDefinition> chores = data.map((item) => ChoreDefinition.fromJson(item)).toList();
+    return chores;
+  }
+
+  Future<void> completeChore(String id) async {
+    var resp = await http.post(
+      "https://api.doit.jtoid.com/api/upcoming/${id}",
+      headers: {
+        "Authorization": "Bearer ${this._token}",
+      },
+    );
+    if (resp.statusCode == 401 || resp.statusCode == 403) {
+      await this._resetToken();
+      resp = await http.post(
+        "https://api.doit.jtoid.com/api/upcoming/${id}",
+        headers: {
+          "Authorization": "Bearer ${this._token}",
+        },
+      );
+    }
+  }
+
+    Future<void> deleteChore(String id) async {
+      var resp = await http.delete(
+        "https://api.doit.jtoid.com/api/chores/${id}",
+        headers: {
+          "Authorization": "Bearer ${this._token}",
+        },
+      );
+      if(resp.statusCode == 401 || resp.statusCode == 403) {
+        await this._resetToken();
+        resp = await http.delete(
+          "https://api.doit.jtoid.com/api/chores/${id}",
+          headers: {
+            "Authorization": "Bearer ${this._token}",
+          },
+        );
+      }
 
     return;
   }

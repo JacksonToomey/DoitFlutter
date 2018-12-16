@@ -38,7 +38,7 @@ class TabScreenWidget extends StatelessWidget {
     return TabBarView(
       children: <Widget>[
         UpcomingTabWidget(_api),
-        ChoreTabWidget(),
+        ChoreTabWidget(_api),
       ],
     );
   }
