@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => LoginScreenWidget(_api),
         '/tabs': (context) => TabScreenWidget(_api),
-        '/new': (context) => NewChoreWidget(),
+        '/new': (context) => NewChoreWidget(_api),
       },
       theme: ThemeData(
         primaryColor: Colors.white,

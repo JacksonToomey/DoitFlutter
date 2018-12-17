@@ -120,4 +120,34 @@ class Api {
 
     return;
   }
+
+  Future<ChoreDefinition> createChore(String name, String details, int frequencyAmount, String frequencyType, DateTime startDate) async {
+    var data = {
+      "name": name,
+      "details": details,
+      "frequencyAmount": frequencyAmount,
+      "frequencyType": frequencyType,
+      "startDate": startDate.toIso8601String(),
+    };
+    var resp = await http.post(
+      "https://api.doit.jtoid.com/api/chores",
+      headers: {
+        "Authorization": "Bearer ${this._token}",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode(data),
+    );
+    if(resp.statusCode == 401 || resp.statusCode == 403) {
+      await this._resetToken();
+      resp = await http.post(
+        "https://api.doit.jtoid.com/api/chores",
+        headers: {
+          "Authorization": "Bearer ${this._token}",
+        },
+        body: jsonEncode(data),
+      );
+    }
+    Map<String, dynamic> choreData = json.decode(resp.body);
+    return ChoreDefinition.fromJson(choreData);
+  }
 }

@@ -37,6 +37,13 @@ class _ChoreTabState extends State<ChoreTabWidget> {
     });
   }
 
+  Future<void> _refresh() async {
+    _getChores = widget._api.getChoreDefinitions();
+    _getChores.then((chores) => setState(() {
+      _chores = chores;
+    }));
+  }
+
   @override
   Widget build(BuildContext context) => FutureBuilder(
     future: _getChores,
@@ -49,7 +56,7 @@ class _ChoreTabState extends State<ChoreTabWidget> {
           );
         default:
           return RefreshIndicator(
-            onRefresh: () {},
+            onRefresh: _refresh,
             child: ListView.builder(
                 itemCount: _chores.length,
                 itemBuilder: (BuildContext context, int index) => ListTile(
